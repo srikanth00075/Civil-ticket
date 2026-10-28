@@ -1,81 +1,60 @@
-🏛️ Public Complaint Management System
+# Civic Ticket
 
-A Simple and Efficient Way to Report and Track Public Complaints
+A ward-level civic complaint management system. Citizens file geotagged
+complaints with photos; the public board tracks them through Open → In
+Progress → Resolved, and unresolved reports automatically escalate through
+category-specific SLA tiers.
 
-📌 About the Project
+## Features
 
-The Public Complaint Management System is a software project designed to help people report public issues and track the progress of their complaints.
+- **Citizen reporting**: title, category, description, photo upload, map-pinned location
+- **Duplicate detection**: warns about a nearby open report of the same category and offers to upvote it instead
+- **Public board**: list/map views, search, filters, sort (recent / most upvoted / longest waiting), upvotes and comments
+- **SLA escalation**: per-category timelines escalate tickets to review → ward officer → commissioner
+- **Resolution loop**: before/after proof photos and citizen satisfaction ratings
+- **Admin panel** (passcode-gated): priority queue, officer assignment, status updates, CSV export
+- **Analytics ledger**: resolution rate, average resolution time, category/status breakdowns, 14-day filing trend
+- **Live sync banner**: polls storage and prompts a refresh when other users change the board
 
-People often face problems such as damaged roads, garbage accumulation, water supply issues, and streetlight failures. This system aims to make reporting these problems easier and help the responsible authorities manage complaints efficiently.
+## Getting started
 
-🎯 Objectives
+```bash
+npm install
+npm run dev
+```
 
-* Provide an easy way for citizens to submit complaints.
-* Help authorities manage and respond to public issues.
-* Allow users to track complaint status.
-* Improve transparency in complaint handling.
-* Maintain complaint records in an organized manner.
+Then open the URL Vite prints (usually http://localhost:5173).
 
-✨ Features
+Demo admin passcode: `WARD14`.
 
-* 📝 Complaint Registration — Submit complaints with relevant details.
-* 📍 Issue Details — Provide information about the location and type of issue.
-* 🔎 Complaint Tracking — Check the status of submitted complaints.
-* 👨‍💼 Admin Management — Manage and review complaints.
-* 🔄 Status Updates — Track progress from submission to resolution.
-* 📊 Complaint Records — Maintain organized complaint information.
+## Architecture
 
-Features listed above describe the project’s intended functionality. Actual features depend on the implemented code.
+Client-only React single-page app in three layers:
 
-🛠️ Technologies Used
+| Layer | Responsibility |
+|---|---|
+| Presentation | `TicketStub`, `TownMap`, `Ledger`, forms and admin UI |
+| Logic & state | React state/hooks: SLA escalation, priority scoring, filtering, duplicate detection, polling |
+| Storage | `window.storage` key-value API (shared registry + personal store) |
 
-Update this section to match the technologies used in your project.
+See [`docs/CivicTicket_Project_Report.docx`](docs/CivicTicket_Project_Report.docx) for the abstract, architecture drawings, data dictionary and design patterns.
 
-* Frontend: HTML, CSS, JavaScript (if used)
-* Backend: PHP, Java, Python, or another language (as implemented)
-* Database: MySQL (if used)
+## Important limitations
 
-⚙️ Installation and Setup
+- **Storage is local.** `src/storage.js` emulates `window.storage` with `localStorage`, so data lives in one browser and is not shared across users. For a real multi-user deployment, swap in a backend adapter with the same `get/set/delete/list` interface.
+- **The admin passcode is client-side only.** It is visible in the JavaScript bundle and is a UX gate, not real authentication. Production use needs server-side auth.
 
-1. Clone this repository:
+## Project structure
 
-git clone https://github.com/YOUR-USERNAME/civic-ticket.git
-
-2. Open the downloaded project folder.
-3. Install or configure the required software and dependencies.
-4. Configure the database if your project uses one.
-5. Run the project according to the instructions for its programming language and framework.
-
-🚀 How It Works
-
-1. A citizen submits a complaint.
-2. The system records the complaint details.
-3. The administrator reviews the complaint.
-4. The complaint status is updated as work progresses.
-5. The citizen checks the status and follows the resolution.
-
-🌍 Future Enhancements
-
-* Live location support using maps.
-* Email or SMS notifications.
-* Image uploads for complaints.
-* Automatic assignment to the relevant department.
-* Dashboard with complaint statistics.
-* Mobile-friendly user interface.
-
-🎓 Project Information
-
-* Project Name: Public Complaint Management System
-* Domain: Software Development
-* Purpose: College Project
-* Repository: civic-ticket
-
-👨‍💻 Author
-
-Srikanth
-
-“Just a guy with a dream.” 🚀
-
-📄 License
-
-This project is available for educational purposes. Add a specific open-source license if you decide to distribute it under particular terms.
+```
+civic-ticket/
+├── index.html
+├── package.json
+├── vite.config.js
+├── docs/
+│   └── CivicTicket_Project_Report.docx
+└── src/
+    ├── main.jsx
+    ├── storage.js
+    └── CivicComplaintPortal.jsx
+```
